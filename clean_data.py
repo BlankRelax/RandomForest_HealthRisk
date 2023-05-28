@@ -1,5 +1,5 @@
 from functions import functions
-df = functions.read_data()
+df = functions.read_data(r'H:\Datasets', '\Maternal Health Risk Data Set.csv')
 def clean_df(df):
     df=df
     '''Removing duplicates, na values, and evening out the number of samples in each category'''
@@ -17,6 +17,11 @@ def clean_df(df):
     '''
     return df
 df = clean_df(df)
-functions.write_df(df,r'H:\Datasets', '\clean_MaternalHealthRisk.csv')
+try:
+    functions.write_df(df, r'H:\Datasets', '\clean_MaternalHealthRisk.csv')
+except PermissionError:
+    print('chosen file name already exists, choose another one')
+
+
 
 

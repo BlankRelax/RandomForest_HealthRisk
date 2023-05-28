@@ -2,11 +2,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from random import randint
 
-def read_data():
-    directory = r'H:\Datasets'  # change here for directory
-    df = pd.read_csv(directory + '\Maternal Health Risk Data Set.csv')  # read from specified file name
-    columns = [col for col in df.columns]
-    columns
+def read_data(directory, filename):
+    df = pd.read_csv(directory + filename)  # read from specified file name
     return df
 
 def print_df(df,head='none'): # head arg gives user option to print whole or head of df
@@ -28,6 +25,16 @@ def plot_scat(df,x, axis): # takes feature list as input
         plt.xlabel(x[i])
         plt.subplot(a,b,i+1)
     plt.show()
+def make_boxplot(df,axis):
+    df=df
+    a,b = axis
+    i=1
+    for col in df.columns:
+        plt.boxplot(df[col])
+        plt.subplot(a, b, i)
+        i+=1
+    plt.show()
+
 def count_cat(df,column): #counts categories in a categorical column
     df=df
     return df.groupby(column).count()
@@ -48,6 +55,16 @@ def drop_col_cat(df,num, column,category):
 def write_df(df,location, filename):
     df=df
     df.to_csv(location+filename)
+def get_columns(df):
+    columns = [col for col in df.columns]
+    return columns
+
+def to_categorical(df, columns):
+    for col in columns:
+        df[col]=pd.Categorical(df[col])
+        df[col]=df[col].cat.codes
+    return df
+
 
 
 
