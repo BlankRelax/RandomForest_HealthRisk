@@ -45,38 +45,9 @@ def drop_col_cat(df,num, column,category):
     df=df.dropna()
     return df
 
-
-
-
-##########################data exploration##################################
-
-
-#plot_scat(df,columns,(3,2))
-
-
-#print(count_cat(df,'RiskLevel'))
-'''
-We have:
-high risk  272         
-low risk   406         
-mid risk   336
-
-lets remove the number of low risk samples, as we want to focus on high risk classification as this is more important.
-lets reduce low risk from 406 -> 320
-'''
-
-
-
-#df=drop_col_cat(df,86, 'RiskLevel', 'low risk')
-#print(count_cat(df,'RiskLevel'))
-
-'''Now we have a more balanced category distribution:
-   high risk  272        
-   low risk   320         
-   mid risk   336
-
-'''
-
+def write_df(df,location, filename):
+    df=df
+    df.to_csv(location+filename)
 
 
 
