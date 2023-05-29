@@ -20,7 +20,7 @@ df = clean_df(df) # call function
 
 # expect error if we save a file with an existing file name
 try:
-    functions.write_df(df, r'H:\Datasets', '\clean_MaternalHealthRisk.csv')
+    functions.write_df(df, r'H:\Datasets', '\clean_MaternalHealthRisk.csv') #save cleaned data to csv file
 except PermissionError:
     print('chosen file name already exists, choose another one')
 
