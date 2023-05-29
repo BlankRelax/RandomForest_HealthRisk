@@ -1,9 +1,11 @@
 import pandas as pd
+import itertools
+import numpy as np
 import matplotlib.pyplot as plt
 from random import randint
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
-
+from sklearn.metrics import confusion_matrix
 def read_data(directory, filename):
     df = pd.read_csv(directory + filename)  # read from specified file name
     return df
@@ -69,34 +71,54 @@ def drop_col_cat(df,num, column,category):
     df.merge(df[df['RiskLevel'] == 'low risk'])
     df=df.dropna()
     return df
-
 def write_df(df,location, filename):
     df=df
     df.to_csv(location+filename)
 def get_columns(df):
     columns = [col for col in df.columns]
     return columns
-
 def to_categorical(df, columns):
     for col in columns:
         df[col]=pd.Categorical(df[col])
         df[col]=df[col].cat.codes
     return df
-
 def fit_rf(n_est, X_train,y_train):
     rf=RandomForestClassifier(n_estimators=n_est, random_state=42)
     rf.fit(X_train, y_train)
     return rf
-
 def predict_rf(rf_clf, X_test):
     y_hat = rf_clf.predict(X_test)
     return y_hat
 
-
 def split_data(df, target, test_size):
     X_train, X_test, y_train, y_test = train_test_split(df.drop(columns=[target]), df[target], test_size=test_size)
     return X_train, X_test, y_train, y_test
+def get_cnf_matrix(y_test, y_hat):
+    cm=confusion_matrix(y_test, y_hat)
+    return cm
+def plot_confusion_matrix(cm, classes, title='Confusion matrix', cmap=plt.cm.Greens):
+    cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+    plt.figure(figsize=(10,10))
+    plt.imshow(cm, interpolation='nearest', cmap=cmap)
+    plt.title(title)
+    plt.colorbar()
+    tick_marks = np.arange(len(classes))
+    plt.xticks(tick_marks, classes, rotation=45)
+    plt.yticks(tick_marks, classes)
 
+    fmt = '.2f'
+    thresh = cm.max() / 2.
+    for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+        plt.text(j, i, format(cm[i, j], fmt),
+                 horizontalalignment="center",
+                 color="white" if cm[i, j] > thresh else "black")
+
+    plt.ylabel('True label')
+    plt.xlabel('Predicted label')
+    plt.tight_layout()
+    plt.show()
+def vec_translate(a, my_dict):
+    return np.vectorize(my_dict.__getitem__)(a)
 
 
 
