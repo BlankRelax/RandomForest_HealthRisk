@@ -29,6 +29,20 @@ def plot_scat(df,x, axis): # takes feature list as input
         plt.xlabel(x[i])
         plt.subplot(a,b,i+1)
     plt.show()
+def plot_cluster(df,columns, target):
+    risk_keys = {'low risk': 0, 'mid risk': 1, 'high risk': 2}
+    for col in columns:
+        i=1
+        for col1 in columns:
+            j=0
+            if col!=col1:
+                plt.scatter(df[col], df[col1], c=vec_translate(df[target],risk_keys), cmap='jet')
+                plt.xlabel(col)
+                plt.ylabel(col1)
+                plt.colorbar()
+                plt.show()
+                j+=1
+        i+=1
 def make_boxplot(df,columns,axis):
     df=df
     a,b = axis
@@ -122,8 +136,41 @@ def plot_ROC(y_test, y_hat):
     plt.xlabel('False Positive Rate')
     plt.title('Receiver Operating Characteristic (ROC) Curve')
     plt.show()
-def vec_translate(a, my_dict):
+def vec_translate(a, my_dict): # map keys from dictionary onto array
     return np.vectorize(my_dict.__getitem__)(a)
+def rf_param_search(X_train, y_train, X_test, y_test, n_est_list): # search for best n_est param for given array
+    rel_error_array = []
+    for n_est in n_est_list:
+        rel_error_array_temp = []
+        for i in range(1):
+            rf = fit_rf(n_est, X_train, y_train)
+            y_hat = predict_rf(rf, X_test)
+            rel_error = np.array(y_test == y_hat).sum() / np.array(y_test).shape[0]
+            rel_error_array_temp.append(rel_error)
+        rel_error_array.append(np.mean(rel_error_array_temp))
+    plot(n_est_list, rel_error_array, 'n_est', 'relative error', 'Avg relative error against n_est')
+    risk_keys = {'low risk': 0, 'mid risk': 1, 'high risk': 2}
+    y_test = vec_translate(np.array(y_test), risk_keys)
+    y_hat = vec_translate(np.array(y_hat), risk_keys)
+    cnf_matrix = get_cnf_matrix(y_test, y_hat)
+    print(cnf_matrix)
+    plot_confusion_matrix(cnf_matrix, ['low risk', 'mid risk', 'high risk'])
+def get_rf_cm(n_est, X_train, y_train,X_test, y_test):
+    rf = fit_rf(n_est, X_train, y_train)
+    y_hat = predict_rf(rf, X_test)
+    rel_error = np.array(y_test == y_hat).sum() / np.array(y_test).shape[0]
+    risk_keys = {'low risk': 0, 'mid risk': 1, 'high risk': 2}
+    y_test = vec_translate(np.array(y_test), risk_keys)
+    y_hat = vec_translate(np.array(y_hat), risk_keys)
+    cnf_matrix = get_cnf_matrix(y_test, y_hat)
+    print(cnf_matrix)
+    plot_confusion_matrix(cnf_matrix, ['low risk', 'mid risk', 'high risk'])
+
+
+
+
+
+
 
 
 
