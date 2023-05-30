@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from random import randint
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import roc_curve
@@ -103,6 +104,18 @@ def fit_rf(n_est, X_train,y_train):
 def predict_rf(rf_clf, X_test):
     y_hat = rf_clf.predict(X_test)
     return y_hat
+def fit_dt(criterion, splitter, X_train, y_train):
+    clf=DecisionTreeClassifier(criterion=criterion,splitter=splitter, min_samples_split=2)
+    return clf.fit(X_train, y_train)
+def predict_dt(clf,X_test, y_test):
+    y_hat=clf.predict(X_test)
+    rel_error = np.array(y_test == y_hat).sum() / np.array(y_test).shape[0]
+    risk_keys = {'low risk': 0, 'mid risk': 1, 'high risk': 2}
+    y_test = vec_translate(np.array(y_test), risk_keys)
+    y_hat = vec_translate(np.array(y_hat), risk_keys)
+    cnf_matrix = get_cnf_matrix(y_test, y_hat)
+    print(cnf_matrix)
+    plot_confusion_matrix(cnf_matrix, ['low risk', 'mid risk', 'high risk'])
 def split_data(df, target, test_size):
     X_train, X_test, y_train, y_test = train_test_split(df.drop(columns=[target]), df[target], test_size=test_size)
     return X_train, X_test, y_train, y_test
